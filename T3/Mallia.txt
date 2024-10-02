@@ -1,0 +1,85 @@
+Tehtäviä tehdessäsi saatat tarvita jotain alla olevan kaltaista koodia. Palaset eivät ole valmiita, eivätkä oikeassa järjestyksessä.
+
+0) Haetaan dataa ...
+ 
+public static BitcoinJsonResponse GetBitcoinsInRange(string startDate, string endDate) 
+{
+    string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={startDate}&to={endDate}";     // the url is created including user's input from the form
+    BitcoinJsonResponse bitcoinResponse = new();
+
+    try {
+        HttpWebRequest jsonRequest = (HttpWebRequest)WebRequest.Create(url);
+        HttpWebResponse jsonResponse = (HttpWebResponse)jsonRequest.GetResponse();
+
+        string bitcoins;
+        using (System.IO.StreamReader JsonResponseReader = new(jsonResponse.GetResponseStream())) {
+            bitcoins = JsonResponseReader.ReadToEnd();
+        }
+
+        bitcoinResponse = JsonConvert.DeserializeObject<BitcoinJsonResponse>(bitcoins);
+    } catch (Exception e) {
+        Console.WriteLine("Error: {0}", e.Message);
+    }
+    
+    return bitcoinResponse;
+}
+
+
+1) ... jotain tällaista ehkä ...
+
+List<Bitcoin> GetBitcoins(start..., end...)
+{
+    ...
+    BitcoinJsonResponse bitcoins = GetBitcoinsInRange(startDate, endDate);
+
+    if (bitcoins.Prices.Length > 0) {
+        for (int i = 0; i < bitcoins.Prices.GetLength(0); i++) {// get length of the first dimension of an array
+            Bitcoin bitcoin = new() {
+                DateTime = GetDateTimeFromBicoinsDB(bitcoins, i),
+                Price = GetPriceFromBitcoinsDB(bitcoins, i),
+                Market_cap = GetMarketCapFromBitcoinsDB(bitcoins, i),
+                Total_volume = GetTotalVolumeFromBitcoinsDB(bitcoins, i)
+            };
+
+            BitcoinList.Add(bitcoin);
+        }
+        return BitcoinList;
+    }
+    
+    return null;
+}
+
+
+2) Näillä saat arvot sieltä JsonResponsesta (rivi, sarake)
+
+        private static DateTime GetDateTimeFromBicoinsDB(BitcoinJsonResponse bitcoins, int row) {
+            return DateTimeOffset.FromUnixTimeMilliseconds(Int64.Parse(bitcoins.Prices[row, 0])).DateTime;
+        }
+
+        private static decimal GetPriceFromBitcoinsDB(BitcoinJsonResponse bitcoins, int row) {
+            return decimal.Parse(bitcoins.Prices[row, 1].Replace('.', ','));
+        }
+
+        private static decimal GetMarketCapFromBitcoinsDB(BitcoinJsonResponse bitcoins, int row) {
+            return decimal.Parse(bitcoins.Market_caps[row, 1].Replace('.', ','));
+        }
+
+
+3) Ehkä jotain tällaista ....
+ 
+namespace Crypto_analyser.Model 
+{
+    public class Bitcoin {              // DB model
+        public int Id { get; set; }
+        public DateTime DateTime { get; set; }
+        public decimal Price { get; set; }
+        public decimal Market_cap { get; set; }
+        public decimal Total_volume { get; set; }
+    }
+
+    public class BitcoinJsonResponse {          // JSON response model. Mistä alla olevat ovat saaneet nimensä?
+        public string[,] Prices { get; set; }
+        public string[,] Market_caps { get; set; }
+        public string[,] Total_volumes { get; set; }
+    }
+}
