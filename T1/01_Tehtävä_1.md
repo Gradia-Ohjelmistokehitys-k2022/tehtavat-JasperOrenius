@@ -13,7 +13,7 @@ Voit etsiä muualtakin verkosta lisätietoa.
 
 ```
 // Aja yhden kerran seuraava komento
-git remote add upstream https://github.com/Gradia-Ohjelmistokehitys-k2024/Rajapinnat-PetriRaatikainenGradia
+git remote add upstream https://github.com/Gradia-Ohjelmistokehitys-k2022/rajapinnat-k2025
 
 // Aja silloin tällöin 3 seuraavaa komentoa
 git fetch 
