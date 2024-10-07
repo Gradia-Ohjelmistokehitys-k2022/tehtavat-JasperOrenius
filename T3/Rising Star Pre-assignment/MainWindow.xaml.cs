@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 
@@ -24,6 +25,28 @@ namespace Rising_Star_Pre_assignment
             DateTime startDate = startDatePicker.SelectedDate ?? DateTime.Now;
             DateTime endDate = endDatePicker.SelectedDate ?? DateTime.Now;
             await FetchBitcoinDataAsync(startDate, endDate);
+        }
+
+        private void DataPoint_MouseEnter(object sender, MouseEventArgs e)
+        {
+            if(sender is Ellipse dataPoint && dataPoint.Tag is Tuple<DateTime, double> data)
+            {
+                string toolTipText = $"{data.Item1:dd-MM-yyyy HH:mm}\nPrice : {data.Item2:F2} €";
+                ToolTip toolTip = new ToolTip { Content = toolTipText };
+                dataPoint.ToolTip = toolTip;
+            }
+        }
+
+        private void DataPoint_MouseMove(object sender, MouseEventArgs e)
+        {
+            if(sender is Ellipse dataPoint)
+            {
+                ToolTip toolTip = dataPoint.ToolTip as ToolTip;
+                if(toolTip != null)
+                {
+                    toolTip.IsOpen = true;
+                }
+            }
         }
 
         private void DrawPriceChart()
@@ -78,6 +101,20 @@ namespace Rising_Star_Pre_assignment
                 double x = i * stepX;
                 double y = canvasHeight - (normalizedPrice * canvasHeight);
                 polyline.Points.Add(new Point(x, y));
+                Ellipse dataPoint = new Ellipse
+                {
+                    Width = 6,
+                    Height = 6,
+                    Fill = Brushes.Red,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1,
+                    Tag = new Tuple<DateTime, double>(bitcoinPrices[i].Item1, bitcoinPrices[i].Item2)
+                };
+                Canvas.SetLeft(dataPoint, x - 3);
+                Canvas.SetTop(dataPoint, y - 3);
+                dataPoint.MouseEnter += DataPoint_MouseEnter;
+                dataPoint.MouseMove += DataPoint_MouseMove;
+                chartCanvas.Children.Add(dataPoint);
                 if(i == 0 || i == bitcoinPrices.Count - 1 || (i % dateInterval == 0 && i != 0))
                 {
                     TextBlock dateLabel = new TextBlock
