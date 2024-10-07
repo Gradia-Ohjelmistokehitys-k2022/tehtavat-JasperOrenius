@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Rising_Star_Pre_assignment"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="500" Width="800">
     <Grid>
         <StackPanel Margin="10">
             <StackPanel Orientation="Horizontal">
@@ -16,9 +16,7 @@
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,10">
                 <Button Content="Fetch Data" Click="FetchData_Click" Width="100" Margin="5"/>
-                <Button Content="Draw Chart" Click="DrawChart_Click" Width="150" Margin="5"/>
             </StackPanel>
-            <TextBlock x:Name="resultTextBlock" Text="Results will be displayed here" Margin="0,20" FontWeight="Bold"/>
             <Canvas x:Name="chartCanvas" Width="600" Height="300" Background="LightGray" Margin="0,20"/>
         </StackPanel>
     </Grid>

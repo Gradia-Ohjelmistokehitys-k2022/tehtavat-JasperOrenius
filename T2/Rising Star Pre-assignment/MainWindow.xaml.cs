@@ -1,15 +1,9 @@
 ﻿using Newtonsoft.Json;
+using System.Diagnostics;
 using System.Net.Http;
-using System.Text;
-using System.Text.Json.Serialization;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
 using System.Windows.Shapes;
 
 namespace Rising_Star_Pre_assignment
@@ -32,11 +26,6 @@ namespace Rising_Star_Pre_assignment
             await FetchBitcoinDataAsync(startDate, endDate);
         }
 
-        private void DrawChart_Click(object sender, RoutedEventArgs e)
-        {
-            DrawPriceChart();
-        }
-
         private void DrawPriceChart()
         {
             chartCanvas.Children.Clear();
@@ -45,33 +34,37 @@ namespace Rising_Star_Pre_assignment
             double canvasHeight = chartCanvas.ActualHeight;
             double minPrice = bitcoinPrices.Min(p => p.Item2);
             double maxPrice = bitcoinPrices.Max(p => p.Item2);
-            int gridLineAmount = 5;
+            int gridLineAmount = 10;
             double priceRange = maxPrice - minPrice;
             double priceInterval = priceRange / gridLineAmount;
+            int dateLineAmount = 10;
+            int dateInterval = (bitcoinPrices.Count - 1) / (dateLineAmount - 1);
             for(int i = 0; i <= gridLineAmount; i++)
             {
                 double price = minPrice + (i * priceInterval);
                 double normalizedPrice = (price - minPrice) / priceRange;
                 double y = canvasHeight - (normalizedPrice * canvasHeight);
+                TextBlock priceLabel = new TextBlock
+                {
+                    Text = price.ToString("F2") + " €",
+                    Foreground = Brushes.Black,
+                    FontSize = 12
+                };
                 Line gridLine = new Line
                 {
                     X1 = 0,
                     Y1 = y,
                     X2 = canvasWidth,
                     Y2 = y,
-                    Stroke = Brushes.LightGray,
+                    Stroke = Brushes.Black,
+                    HorizontalAlignment = HorizontalAlignment.Left,
+                    VerticalAlignment = VerticalAlignment.Center,
                     StrokeThickness = 1
-                };
-                chartCanvas.Children.Add(gridLine);
-                TextBlock priceLabel = new TextBlock
-                {
-                    Text = price.ToString("F2"),
-                    Foreground = Brushes.Black,
-                    FontSize = 12
                 };
                 Canvas.SetLeft(priceLabel, -60);
                 Canvas.SetTop(priceLabel, y - 10);
                 chartCanvas.Children.Add(priceLabel);
+                chartCanvas.Children.Add(gridLine);
             }
             double stepX = canvasWidth / (bitcoinPrices.Count - 1);
             Polyline polyline = new Polyline
@@ -85,6 +78,30 @@ namespace Rising_Star_Pre_assignment
                 double x = i * stepX;
                 double y = canvasHeight - (normalizedPrice * canvasHeight);
                 polyline.Points.Add(new Point(x, y));
+                if(i == 0 || i == bitcoinPrices.Count - 1 || (i % dateInterval == 0 && i != 0))
+                {
+                    TextBlock dateLabel = new TextBlock
+                    {
+                        Text = bitcoinPrices[i].Item1.ToString("dd-MM-yyyy"),
+                        Foreground = Brushes.Black,
+                        FontSize = 10
+                    };
+                    Line dateLine = new Line
+                    {
+                        X1 = x,
+                        Y1 = 0,
+                        X2 = x,
+                        Y2 = canvasHeight,
+                        Stroke = Brushes.Black,
+                        HorizontalAlignment = HorizontalAlignment.Center,
+                        VerticalAlignment = VerticalAlignment.Top,
+                        StrokeThickness = 1
+                    };
+                    Canvas.SetLeft(dateLabel, x - 20);
+                    Canvas.SetTop(dateLabel, canvasHeight + 5);
+                    chartCanvas.Children.Add(dateLabel);
+                    chartCanvas.Children.Add(dateLine);
+                }
             }
             chartCanvas.Children.Add(polyline);
         }
@@ -116,7 +133,7 @@ namespace Rising_Star_Pre_assignment
                 double price = priceData[1];
                 bitcoinPrices.Add(new Tuple<DateTime, double>(date, price));
             }
-            resultTextBlock.Text = "Data fetched succesfully.";
+            DrawPriceChart();
         }
 
         public static DateTime UnixToDateTime(double unixTime)
