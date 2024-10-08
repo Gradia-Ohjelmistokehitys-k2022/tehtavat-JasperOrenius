@@ -49,6 +49,18 @@ namespace Rising_Star_Pre_assignment
             }
         }
 
+        private void DataPoint_MouseLeave(object sender, MouseEventArgs e)
+        {
+            if(sender is Ellipse dataPoint)
+            {
+                ToolTip toolTip = dataPoint.ToolTip as ToolTip;
+                if(toolTip != null)
+                {
+                    toolTip.IsOpen = false;
+                }
+            }
+        }
+
         private void DrawPriceChart()
         {
             chartCanvas.Children.Clear();
@@ -60,7 +72,7 @@ namespace Rising_Star_Pre_assignment
             int gridLineAmount = 10;
             double priceRange = maxPrice - minPrice;
             double priceInterval = priceRange / gridLineAmount;
-            int dateLineAmount = 10;
+            int dateLineAmount = 5;
             int dateInterval = (bitcoinPrices.Count - 1) / (dateLineAmount - 1);
             for(int i = 0; i <= gridLineAmount; i++)
             {
@@ -114,6 +126,7 @@ namespace Rising_Star_Pre_assignment
                 Canvas.SetTop(dataPoint, y - 3);
                 dataPoint.MouseEnter += DataPoint_MouseEnter;
                 dataPoint.MouseMove += DataPoint_MouseMove;
+                dataPoint.MouseLeave += DataPoint_MouseLeave;
                 chartCanvas.Children.Add(dataPoint);
                 if(i == 0 || i == bitcoinPrices.Count - 1 || (i % dateInterval == 0 && i != 0))
                 {
