@@ -16,6 +16,7 @@ namespace Rising_Star_Pre_assignment
         private List<Tuple<DateTime, double>> bitcoinPrices;
         private List<double> dataPointPositions = new List<double>();
         private List<Ellipse> dataPoints = new List<Ellipse>();
+        private int? currentDataPointIndex = null;
         Line inputLine = new Line();
 
         public MainWindow()
@@ -53,16 +54,20 @@ namespace Rising_Star_Pre_assignment
         private void Chart_MouseMove(object sender, MouseEventArgs e)
         {
             if (dataPointPositions == null || !dataPointPositions.Any()) return;
-            System.Windows.Point mousePosition = Mouse.GetPosition(chartCanvas);
+            Point mousePosition = Mouse.GetPosition(chartCanvas);
             double[] dataPoints = dataPointPositions.ToArray();
             double closestDataPoint = dataPoints.MinBy(x => Math.Abs((long)x - mousePosition.X));
-            int dataPointIndex = dataPointPositions.IndexOf(closestDataPoint);
+            int newIndex = dataPointPositions.IndexOf(closestDataPoint);
+            if(currentDataPointIndex != newIndex)
+            {
+                currentDataPointIndex = newIndex;
+                UpdateToolTip(this.dataPoints[newIndex], this.dataPoints);
+            }
             inputLine.X1 = closestDataPoint;
             inputLine.X2 = closestDataPoint;
-            DisplayToolTip(this.dataPoints[dataPointIndex], this.dataPoints);
         }
 
-        private void DisplayToolTip(Ellipse dataPoint, List<Ellipse> dataPoints)
+        private void UpdateToolTip(Ellipse dataPoint, List<Ellipse> dataPoints)
         {
             foreach(Ellipse point in dataPoints)
             {
@@ -75,8 +80,17 @@ namespace Rising_Star_Pre_assignment
             if(dataPoint.Tag is Tuple<DateTime, double> data)
             {
                 string toolTipText = $"{data.Item1:dd-MM-yyyy HH:mm}\nPrice : {data.Item2:F2} €";
-                ToolTip toolTip = new ToolTip { Content = toolTipText };
+                ToolTip toolTip = new ToolTip { 
+                    Content = toolTipText,
+                    Placement = System.Windows.Controls.Primitives.PlacementMode.Relative,
+                    HorizontalOffset = 10,
+                    VerticalOffset = -10
+                };
                 dataPoint.ToolTip = toolTip;
+                Point dataPointPosition = new Point(Canvas.GetLeft(dataPoint) + dataPoint.Width / 2, Canvas.GetTop(dataPoint) + dataPoint.Height / 2);
+                toolTip.PlacementTarget = chartCanvas;
+                toolTip.HorizontalOffset = dataPointPosition.X + 10;
+                toolTip.VerticalOffset = dataPointPosition.Y - 10;
                 toolTip.IsOpen = true;
             }
         }
@@ -94,7 +108,8 @@ namespace Rising_Star_Pre_assignment
             double priceRange = maxPrice - minPrice;
             double priceInterval = priceRange / gridLineAmount;
             int dateLineAmount = 5;
-            int dateInterval = (bitcoinPrices.Count - 1) / (dateLineAmount - 1);
+            int dateInterval = Math.Max((bitcoinPrices.Count - 1) / (dateLineAmount - 1), 1);
+            double previousX = double.MinValue;
             for(int i = 0; i <= gridLineAmount; i++)
             {
                 double price = minPrice + (i * priceInterval);
@@ -150,6 +165,8 @@ namespace Rising_Star_Pre_assignment
                 chartCanvas.Children.Add(dataPoint);
                 if(i == 0 || i == bitcoinPrices.Count - 1 || (i % dateInterval == 0 && i != 0))
                 {
+                    if (Math.Abs(x - previousX) < 40) continue;
+                    previousX = x;
                     TextBlock dateLabel = new TextBlock
                     {
                         Text = bitcoinPrices[i].Item1.ToString("dd-MM-yyyy"),
@@ -167,7 +184,8 @@ namespace Rising_Star_Pre_assignment
                         VerticalAlignment = VerticalAlignment.Top,
                         StrokeThickness = 1
                     };
-                    Canvas.SetLeft(dateLabel, x - 20);
+                    var labelWidth = dateLabel.ActualHeight;
+                    Canvas.SetLeft(dateLabel, x - (labelWidth / 2));
                     Canvas.SetTop(dateLabel, canvasHeight + 5);
                     chartCanvas.Children.Add(dateLabel);
                     chartCanvas.Children.Add(dateLine);
