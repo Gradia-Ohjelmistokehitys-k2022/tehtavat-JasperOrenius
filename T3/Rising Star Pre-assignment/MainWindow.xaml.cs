@@ -1,5 +1,4 @@
 ﻿using Newtonsoft.Json;
-using System.Diagnostics;
 using System.Net.Http;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,9 +14,15 @@ namespace Rising_Star_Pre_assignment
     public partial class MainWindow : Window
     {
         private List<Tuple<DateTime, double>> bitcoinPrices;
+        private List<double> dataPointPositions = new List<double>();
+        private List<Ellipse> dataPoints = new List<Ellipse>();
+        Line inputLine = new Line();
+
         public MainWindow()
         {
             InitializeComponent();
+            startDatePicker.SelectedDate = DateTime.Today.AddDays(-1);
+            endDatePicker.SelectedDate = DateTime.Today;
         }
 
         private async void FetchData_Click(object sender, RoutedEventArgs e)
@@ -27,43 +32,59 @@ namespace Rising_Star_Pre_assignment
             await FetchBitcoinDataAsync(startDate, endDate);
         }
 
-        private void DataPoint_MouseEnter(object sender, MouseEventArgs e)
+        private void Chart_MouseEnter(object sender, MouseEventArgs e)
         {
-            if(sender is Ellipse dataPoint && dataPoint.Tag is Tuple<DateTime, double> data)
+            if (dataPointPositions == null || !dataPointPositions.Any()) return;
+            double canvasHeight = chartCanvas.ActualHeight;
+            Point mousePosition = Mouse.GetPosition(chartCanvas);
+            inputLine.X1 = mousePosition.X;
+            inputLine.Y1 = 0;
+            inputLine.X2 = mousePosition.X;
+            inputLine.Y2 = canvasHeight;
+            inputLine.Stroke = Brushes.White;
+            chartCanvas.Children.Add(inputLine);
+        }
+
+        private void Chart_MouseLeave(object sender, MouseEventArgs e)
+        {
+            chartCanvas.Children.Remove(inputLine);
+        }
+
+        private void Chart_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (dataPointPositions == null || !dataPointPositions.Any()) return;
+            System.Windows.Point mousePosition = Mouse.GetPosition(chartCanvas);
+            double[] dataPoints = dataPointPositions.ToArray();
+            double closestDataPoint = dataPoints.MinBy(x => Math.Abs((long)x - mousePosition.X));
+            int dataPointIndex = dataPointPositions.IndexOf(closestDataPoint);
+            inputLine.X1 = closestDataPoint;
+            inputLine.X2 = closestDataPoint;
+            DisplayToolTip(this.dataPoints[dataPointIndex], this.dataPoints);
+        }
+
+        private void DisplayToolTip(Ellipse dataPoint, List<Ellipse> dataPoints)
+        {
+            foreach(Ellipse point in dataPoints)
+            {
+                ToolTip toolTip = point.ToolTip as ToolTip;
+                if (toolTip != null)
+                {
+                    toolTip.IsOpen = false;
+                }
+            }
+            if(dataPoint.Tag is Tuple<DateTime, double> data)
             {
                 string toolTipText = $"{data.Item1:dd-MM-yyyy HH:mm}\nPrice : {data.Item2:F2} €";
                 ToolTip toolTip = new ToolTip { Content = toolTipText };
                 dataPoint.ToolTip = toolTip;
-            }
-        }
-
-        private void DataPoint_MouseMove(object sender, MouseEventArgs e)
-        {
-            if(sender is Ellipse dataPoint)
-            {
-                ToolTip toolTip = dataPoint.ToolTip as ToolTip;
-                if(toolTip != null)
-                {
-                    toolTip.IsOpen = true;
-                }
-            }
-        }
-
-        private void DataPoint_MouseLeave(object sender, MouseEventArgs e)
-        {
-            if(sender is Ellipse dataPoint)
-            {
-                ToolTip toolTip = dataPoint.ToolTip as ToolTip;
-                if(toolTip != null)
-                {
-                    toolTip.IsOpen = false;
-                }
+                toolTip.IsOpen = true;
             }
         }
 
         private void DrawPriceChart()
         {
             chartCanvas.Children.Clear();
+            if (dataPointPositions != null) dataPointPositions.Clear();
             if (bitcoinPrices == null || !bitcoinPrices.Any()) return;
             double canvasWidth = chartCanvas.ActualWidth;
             double canvasHeight = chartCanvas.ActualHeight;
@@ -91,7 +112,7 @@ namespace Rising_Star_Pre_assignment
                     Y1 = y,
                     X2 = canvasWidth,
                     Y2 = y,
-                    Stroke = Brushes.Black,
+                    Stroke = (Brush)new BrushConverter().ConvertFrom("#313436"),
                     HorizontalAlignment = HorizontalAlignment.Left,
                     VerticalAlignment = VerticalAlignment.Center,
                     StrokeThickness = 1
@@ -104,7 +125,7 @@ namespace Rising_Star_Pre_assignment
             double stepX = canvasWidth / (bitcoinPrices.Count - 1);
             Polyline polyline = new Polyline
             {
-                Stroke = Brushes.Blue, 
+                Stroke = (Brush)new BrushConverter().ConvertFrom("#81c995"),
                 StrokeThickness = 2
             };
             for(int i = 0; i < bitcoinPrices.Count; i++)
@@ -117,16 +138,15 @@ namespace Rising_Star_Pre_assignment
                 {
                     Width = 6,
                     Height = 6,
-                    Fill = Brushes.Red,
-                    Stroke = Brushes.Black,
+                    Fill = (Brush)new BrushConverter().ConvertFrom("#81c995"),
+                    Stroke = (Brush)new BrushConverter().ConvertFrom("#81c995"),
                     StrokeThickness = 1,
                     Tag = new Tuple<DateTime, double>(bitcoinPrices[i].Item1, bitcoinPrices[i].Item2)
                 };
                 Canvas.SetLeft(dataPoint, x - 3);
                 Canvas.SetTop(dataPoint, y - 3);
-                dataPoint.MouseEnter += DataPoint_MouseEnter;
-                dataPoint.MouseMove += DataPoint_MouseMove;
-                dataPoint.MouseLeave += DataPoint_MouseLeave;
+                dataPointPositions.Add(x);
+                dataPoints.Add(dataPoint);
                 chartCanvas.Children.Add(dataPoint);
                 if(i == 0 || i == bitcoinPrices.Count - 1 || (i % dateInterval == 0 && i != 0))
                 {
@@ -142,7 +162,7 @@ namespace Rising_Star_Pre_assignment
                         Y1 = 0,
                         X2 = x,
                         Y2 = canvasHeight,
-                        Stroke = Brushes.Black,
+                        Stroke = (Brush)new BrushConverter().ConvertFrom("#313436"),
                         HorizontalAlignment = HorizontalAlignment.Center,
                         VerticalAlignment = VerticalAlignment.Top,
                         StrokeThickness = 1
