@@ -35,7 +35,6 @@ namespace Rising_Star_Pre_assignment
 
         private void Chart_MouseEnter(object sender, MouseEventArgs e)
         {
-            if (dataPointPositions == null || !dataPointPositions.Any()) return;
             double canvasHeight = chartCanvas.ActualHeight;
             Point mousePosition = Mouse.GetPosition(chartCanvas);
             inputLine.X1 = mousePosition.X;
@@ -43,17 +42,25 @@ namespace Rising_Star_Pre_assignment
             inputLine.X2 = mousePosition.X;
             inputLine.Y2 = canvasHeight;
             inputLine.Stroke = Brushes.White;
-            chartCanvas.Children.Add(inputLine);
         }
 
         private void Chart_MouseLeave(object sender, MouseEventArgs e)
         {
             chartCanvas.Children.Remove(inputLine);
+            foreach(Ellipse dataPoint in dataPoints)
+            {
+                ToolTip toolTip = dataPoint.ToolTip as ToolTip;
+                if (toolTip != null)
+                {
+                    toolTip.IsOpen = false;
+                }
+            }
         }
 
         private void Chart_MouseMove(object sender, MouseEventArgs e)
         {
             if (dataPointPositions == null || !dataPointPositions.Any()) return;
+            if (!chartCanvas.Children.Contains(inputLine)) chartCanvas.Children.Add(inputLine);
             Point mousePosition = Mouse.GetPosition(chartCanvas);
             double[] dataPoints = dataPointPositions.ToArray();
             double closestDataPoint = dataPoints.MinBy(x => Math.Abs((long)x - mousePosition.X));
@@ -201,7 +208,7 @@ namespace Rising_Star_Pre_assignment
             string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={fromUnix}&to={toUnix}";
             using(HttpClient client  = new HttpClient())
             {
-                var response = await client.GetStringAsync(url);
+                 var response = await client.GetStringAsync(url);
                 var marketData = JsonConvert.DeserializeObject<MarketData>(response);
                 ProcessMarketData(marketData);
             }
