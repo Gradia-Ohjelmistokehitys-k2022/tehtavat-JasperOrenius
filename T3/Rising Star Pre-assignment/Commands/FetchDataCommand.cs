@@ -8,9 +8,19 @@ namespace Rising_Star_Pre_assignment.Controllers
 {
     public class FetchDataCommand : BaseCommand
     {
-        public override void Execute(object? parameter)
+        private readonly Func<Task> fetchDataAction;
+
+        public FetchDataCommand(Func<Task> fetchDataAction)
         {
-            throw new NotImplementedException();
+            this.fetchDataAction = fetchDataAction;
+        }
+
+        public override async void Execute(object? parameter)
+        {
+            if(fetchDataAction != null)
+            {
+                await fetchDataAction();
+            }
         }
     }
 }

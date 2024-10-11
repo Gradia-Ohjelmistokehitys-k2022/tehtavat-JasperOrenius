@@ -23,6 +23,13 @@ namespace Rising_Star_Pre_assignment.ViewModels
         public DataView()
         {
             InitializeComponent();
+            Loaded += OnLoaded;
+        }
+
+        private void OnLoaded(object sender, RoutedEventArgs e)
+        {
+            var viewModel = (DataViewModel)DataContext;
+            viewModel.SetChartCanvas(chartCanvas);
         }
     }
 }

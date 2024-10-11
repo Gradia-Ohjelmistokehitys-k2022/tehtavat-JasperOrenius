@@ -13,6 +13,28 @@ namespace Rising_Star_Pre_assignment.Services
 {
     public class ChartService
     {
+        public static readonly DependencyProperty BitcoinPricesProperty = DependencyProperty.RegisterAttached("BitcoinPrices", typeof(List<Tuple<DateTime, double>>), typeof(ChartService), new PropertyMetadata(null, OnBitcoinPricesChanged));
+
+        public static List<Tuple<DateTime, double>> GetBitcoinPrices(DependencyObject obj)
+        {
+            return (List<Tuple<DateTime, double>>)obj.GetValue(BitcoinPricesProperty);
+        }
+
+        public static void SetBitcoinPrices(DependencyObject obj, List<Tuple<DateTime, double>> value)
+        {
+            obj.SetValue(BitcoinPricesProperty, value);
+        }
+
+        private static void OnBitcoinPricesChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            var canvas = d as Canvas;
+            var bitcoinPrices = e.NewValue as List<Tuple<DateTime, double>>;
+            if(canvas != null && bitcoinPrices != null)
+            {
+                //DrawPriceChart();
+            }
+        }
+
         public void DrawPriceChart(Canvas chartCanvas, List<Tuple<DateTime, double>> bitcoinPrices, List<Ellipse> dataPoints, List<double> dataPointPositions)
         {
             chartCanvas.Children.Clear();

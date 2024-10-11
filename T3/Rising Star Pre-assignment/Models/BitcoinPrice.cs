@@ -13,7 +13,7 @@ namespace Rising_Star_Pre_assignment.Models
         private List<Tuple<DateTime, double>> bitcoinPrices;
         public event Action<List<Tuple<DateTime, double>>> OnDataFetched;
 
-        private async Task FetchBitcoinDataAsync(DateTime startDate, DateTime endDate)
+        public async Task FetchBitcoinDataAsync(DateTime startDate, DateTime endDate)
         {
             long fromUnix = DateTimeToUnixTimestamp(startDate);
             long toUnix = DateTimeToUnixTimestamp(endDate.AddHours(1));

@@ -12,9 +12,9 @@
         <StackPanel Background="#FF5A5A5A">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Start Date:" VerticalAlignment="Center" FontFamily="Arial" FontWeight="Bold" Foreground="White"/>
-                <DatePicker x:Name="startDatePicker" Margin="10,0"/>
+                <DatePicker x:Name="startDatePicker" Margin="10,0" SelectedDate="{Binding StartDate, Mode=TwoWay}"/>
                 <Label Content="End Date:" VerticalAlignment="Center" FontFamily="Arial" FontWeight="Bold" Foreground="White"/>
-                <DatePicker x:Name="endDatePicker" Margin="10,0"/>
+                <DatePicker x:Name="endDatePicker" Margin="10,0" SelectedDate="{Binding EndDate, Mode=TwoWay}"/>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,10">
                 <Button Style="{DynamicResource ButtonStyle_Rounded}" Content="Fetch Data" Command="{Binding FetchData}" Width="115" Margin="5" Height="41" FontSize="18" FontFamily="Arial" Background="#FF64CCF1" Foreground="White"/>

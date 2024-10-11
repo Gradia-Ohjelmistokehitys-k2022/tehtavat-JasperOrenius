@@ -16,17 +16,8 @@ namespace Rising_Star_Pre_assignment
         public MainWindow()
         {
             InitializeComponent();
-            //startDatePicker.SelectedDate = DateTime.Today.AddDays(-1);
-            //endDatePicker.SelectedDate = DateTime.Today;
         }
         /*
-        private async void FetchData_Click(object sender, RoutedEventArgs e)
-        {
-            DateTime startDate = startDatePicker.SelectedDate ?? DateTime.Now;
-            DateTime endDate = endDatePicker.SelectedDate ?? DateTime.Now;
-            await FetchBitcoinDataAsync(startDate, endDate);
-        }
-
         private void Chart_MouseEnter(object sender, MouseEventArgs e)
         {
             double canvasHeight = chartCanvas.ActualHeight;
