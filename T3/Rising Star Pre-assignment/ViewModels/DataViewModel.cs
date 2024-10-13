@@ -3,6 +3,7 @@ using Rising_Star_Pre_assignment.Models;
 using Rising_Star_Pre_assignment.Services;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -16,19 +17,18 @@ namespace Rising_Star_Pre_assignment.ViewModels
     {
         private DateTime? startDate;
         private DateTime? endDate;
-        private readonly ChartService chartService;
         private readonly BitcoinPrice bitcoinPrice;
 
         public ICommand FetchData { get; }
         public ICommand MouseMoveCommand { get; private set; }
 
-        private List<Ellipse> dataPoints = new List<Ellipse>();
-        private List<double> dataPointPositions = new List<double>();
-        private Canvas chartCanvas;
+        public ObservableCollection<DataPointViewModel> DataPoints { get; private set; } = new ObservableCollection<DataPointViewModel>();
+        public ObservableCollection<double> DataPointPositions { get; private set; } = new ObservableCollection<double>();
+
+        public event EventHandler<List<Tuple<DateTime, double>>> ChartUpdated;
 
         public DataViewModel()
         {
-            chartService = new ChartService();
             bitcoinPrice = new BitcoinPrice();
             FetchData = new FetchDataCommand(FetchBitcoinDataAsync);
             bitcoinPrice.OnDataFetched += OnBitcoinDataFetched;
@@ -64,17 +64,28 @@ namespace Rising_Star_Pre_assignment.ViewModels
         
         private void OnBitcoinDataFetched(List<Tuple<DateTime, double>> bitcoinPrices)
         {
-            if(bitcoinPrices != null && chartCanvas != null)
+            if(bitcoinPrices != null)
             {
-                dataPoints.Clear();
-                dataPointPositions.Clear();
-                chartService.DrawPriceChart(chartCanvas, bitcoinPrices, dataPoints, dataPointPositions);
+                DataPoints.Clear();
+                DataPointPositions.Clear();
+                foreach (var bitcoinData in bitcoinPrices)
+                {
+                    var dateTime = bitcoinData.Item1;
+                    var price = bitcoinData.Item2;
+                    var dataPoint = new DataPointViewModel
+                    {
+                        Date = dateTime,
+                        Price = price,
+                        X = dateTime.ToOADate(),
+                        Y = price
+                    };
+                    DataPoints.Add(dataPoint);
+                    DataPointPositions.Add(dataPoint.X);
+                }
+                OnPropertyChanged(nameof(DataPoints));
+                OnPropertyChanged(nameof(DataPointPositions));
+                ChartUpdated?.Invoke(this, bitcoinPrices);
             }
-        }
-
-        public void SetChartCanvas(Canvas canvas)
-        {
-            chartCanvas = canvas;
         }
     }
 }

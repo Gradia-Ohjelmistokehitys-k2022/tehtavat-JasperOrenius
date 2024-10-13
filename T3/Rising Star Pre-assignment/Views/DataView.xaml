@@ -19,7 +19,26 @@
             <StackPanel Orientation="Horizontal" Margin="0,10">
                 <Button Style="{DynamicResource ButtonStyle_Rounded}" Content="Fetch Data" Command="{Binding FetchData}" Width="115" Margin="5" Height="41" FontSize="18" FontFamily="Arial" Background="#FF64CCF1" Foreground="White"/>
             </StackPanel>
-            <Canvas x:Name="chartCanvas" Width="600" Height="300" Background="#FF1F1F1F" Margin="0,20" utils:MouseEvents.MouseMoveCommand="{Binding MouseMoveCommand}"/>
+            <Canvas x:Name="chartCanvas" 
+                    Width="600" 
+                    Height="300" 
+                    Background="#FF1F1F1F" 
+                    Margin="0,20" 
+                    utils:MouseEvents.MouseMoveCommand="{Binding MouseMoveCommand}">
+                <ItemsControl ItemsSource="{Binding DataPoints}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemContainerStyle>
+                        <Style TargetType="ContentPresenter">
+                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
+                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
+                        </Style>
+                    </ItemsControl.ItemContainerStyle>
+                </ItemsControl>
+            </Canvas>
         </StackPanel>
     </Grid>
 </UserControl>
