@@ -17,30 +17,5 @@ namespace Rising_Star_Pre_assignment
         {
             InitializeComponent();
         }
-        /*
-        private void Chart_MouseEnter(object sender, MouseEventArgs e)
-        {
-            double canvasHeight = chartCanvas.ActualHeight;
-            Point mousePosition = Mouse.GetPosition(chartCanvas);
-            inputLine.X1 = mousePosition.X;
-            inputLine.Y1 = 0;
-            inputLine.X2 = mousePosition.X;
-            inputLine.Y2 = canvasHeight;
-            inputLine.Stroke = Brushes.White;
-        }
-
-        private void Chart_MouseLeave(object sender, MouseEventArgs e)
-        {
-            chartCanvas.Children.Remove(inputLine);
-            foreach(Ellipse dataPoint in dataPoints)
-            {
-                ToolTip toolTip = dataPoint.ToolTip as ToolTip;
-                if (toolTip != null)
-                {
-                    toolTip.IsOpen = false;
-                }
-            }
-        }
-        */
     }
 }

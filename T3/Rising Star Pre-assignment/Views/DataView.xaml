@@ -8,6 +8,9 @@
              mc:Ignorable="d"
              d:DesignHeight="500"
              d:DesignWidth="800">
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </UserControl.Resources>
     <Grid>
         <StackPanel Background="#FF5A5A5A">
             <StackPanel Orientation="Horizontal">
@@ -24,19 +27,27 @@
                     Height="300" 
                     Background="#FF1F1F1F" 
                     Margin="0,20" 
-                    utils:MouseEvents.MouseMoveCommand="{Binding MouseMoveCommand}">
+                    utils:MouseEvents.MouseMoveCommand="{Binding MouseMoveCommand}"
+                    utils:MouseEvents.MouseEnterCommand="{Binding MouseEnterCommand}"
+                    utils:MouseEvents.MouseLeaveCommand="{Binding MouseLeaveCommand}">
+
+                <Line X1="{Binding InputLinePosition}"
+                      X2="{Binding InputLinePosition}"
+                      Y1="0"
+                      Y2="{Binding ActualHeight, ElementName=chartCanvas}"
+                      Stroke="White"
+                      StrokeThickness="2"
+                      Visibility="{Binding IsLineVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <ItemsControl ItemsSource="{Binding DataPoints}">
-                    <ItemsControl.ItemsPanel>
-                        <ItemsPanelTemplate>
-                            <Canvas />
-                        </ItemsPanelTemplate>
-                    </ItemsControl.ItemsPanel>
-                    <ItemsControl.ItemContainerStyle>
-                        <Style TargetType="ContentPresenter">
-                            <Setter Property="Canvas.Left" Value="{Binding X}"/>
-                            <Setter Property="Canvas.Top" Value="{Binding Y}"/>
-                        </Style>
-                    </ItemsControl.ItemContainerStyle>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Ellipse Width="6" Height="6"
+                                     Fill="Green"
+                                     ToolTip="{Binding ToolTip}"
+                                     Visibility="{Binding IsToolTipVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Canvas>
         </StackPanel>

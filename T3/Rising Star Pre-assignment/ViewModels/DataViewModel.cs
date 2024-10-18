@@ -1,12 +1,10 @@
-﻿using Rising_Star_Pre_assignment.Controllers;
+﻿using Rising_Star_Pre_assignment.Commands;
+using Rising_Star_Pre_assignment.Controllers;
 using Rising_Star_Pre_assignment.Models;
 using Rising_Star_Pre_assignment.Services;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Security.AccessControl;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Shapes;
@@ -15,22 +13,63 @@ namespace Rising_Star_Pre_assignment.ViewModels
 {
     public class DataViewModel : BaseViewModel
     {
+        private readonly ChartInteractionService chartInteractionService;
+
         private DateTime? startDate;
         private DateTime? endDate;
         private readonly BitcoinPrice bitcoinPrice;
 
         public ICommand FetchData { get; }
         public ICommand MouseMoveCommand { get; private set; }
+        public ICommand MouseEnterCommand { get; private set; }
+        public ICommand MouseLeaveCommand { get; private set; }
+
+        private double inputLinePosition;
+        public double InputLinePosition
+        {
+            get => inputLinePosition;
+            set
+            {
+                inputLinePosition = value;
+                OnPropertyChanged(nameof(InputLinePosition));
+            }
+        }
+
+        private int? currentDataPointIndex;
+        public int? CurrentDataPointIndex
+        {
+            get => currentDataPointIndex;
+            set
+            {
+                currentDataPointIndex = value;
+                OnPropertyChanged(nameof(CurrentDataPointIndex));
+            }
+        }
+
+        private bool isLineVisible;
+        public bool IsLineVisible
+        {
+            get => isLineVisible;
+            set
+            {
+                isLineVisible = value;
+                OnPropertyChanged(nameof(IsLineVisible));
+            }
+        }
 
         public ObservableCollection<DataPointViewModel> DataPoints { get; private set; } = new ObservableCollection<DataPointViewModel>();
         public ObservableCollection<double> DataPointPositions { get; private set; } = new ObservableCollection<double>();
 
         public event EventHandler<List<Tuple<DateTime, double>>> ChartUpdated;
 
-        public DataViewModel()
+        public DataViewModel(ChartInteractionService chartInteractionService)
         {
+            this.chartInteractionService = chartInteractionService;
             bitcoinPrice = new BitcoinPrice();
             FetchData = new FetchDataCommand(FetchBitcoinDataAsync);
+            MouseEnterCommand = new MouseEnterCommand(chartInteractionService);
+            MouseLeaveCommand = new MouseLeaveCommand(chartInteractionService);
+            MouseMoveCommand = new MouseMoveCommand(chartInteractionService);
             bitcoinPrice.OnDataFetched += OnBitcoinDataFetched;
         }
 

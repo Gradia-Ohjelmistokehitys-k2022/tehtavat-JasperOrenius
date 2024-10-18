@@ -26,7 +26,7 @@ namespace Rising_Star_Pre_assignment.ViewModels
         {
             InitializeComponent();
             Loaded += OnLoaded;
-            chartService = new ChartService();            
+            chartService = new ChartService();
         }
 
         private void DataViewModel_ChartUpdated(object? sender, List<Tuple<DateTime, double>> bitcoinPrices)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Rising_Star_Pre_assignment.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -12,7 +13,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
 
         public MainViewModel()
         {
-            CurrentViewModel = new DataViewModel();
+            ChartInteractionService chartInteractionService = new ChartInteractionService();
+            CurrentViewModel = new DataViewModel(chartInteractionService);
         }
     }
 }
