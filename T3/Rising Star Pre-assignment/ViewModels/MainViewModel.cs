@@ -14,7 +14,7 @@ namespace Rising_Star_Pre_assignment.ViewModels
         public MainViewModel()
         {
             ChartInteractionService chartInteractionService = new ChartInteractionService();
-            CurrentViewModel = new DataViewModel(chartInteractionService);
+            CurrentViewModel = new DataViewModel(chartInteractionService, null);
         }
     }
 }

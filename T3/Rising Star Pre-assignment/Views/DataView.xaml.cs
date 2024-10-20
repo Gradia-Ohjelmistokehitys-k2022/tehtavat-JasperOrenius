@@ -34,11 +34,18 @@ namespace Rising_Star_Pre_assignment.ViewModels
             List<Ellipse> dataPoints = new List<Ellipse>();
             List<double> dataPointPositions = new List<double>();
             chartService.DrawPriceChart(chartCanvas, bitcoinPrices, dataPoints, dataPointPositions);
+            var viewModel = (DataViewModel)DataContext;
+            if(viewModel != null)
+            {
+                viewModel.chartInteractionService.Initialize(chartCanvas, inputLine, dataPoints, dataPointPositions);
+            }
         }
 
         private void OnLoaded(object sender, RoutedEventArgs e)
         {
-            var viewModel = (DataViewModel)DataContext;
+            var chartInteractionService = new ChartInteractionService();
+            var viewModel = new DataViewModel(chartInteractionService, chartCanvas);
+            DataContext = viewModel;
             if(viewModel != null )
             {
                 viewModel.ChartUpdated += DataViewModel_ChartUpdated;

@@ -31,7 +31,8 @@
                     utils:MouseEvents.MouseEnterCommand="{Binding MouseEnterCommand}"
                     utils:MouseEvents.MouseLeaveCommand="{Binding MouseLeaveCommand}">
 
-                <Line X1="{Binding InputLinePosition}"
+                <Line x:Name="inputLine"
+                      X1="{Binding InputLinePosition}"
                       X2="{Binding InputLinePosition}"
                       Y1="0"
                       Y2="{Binding ActualHeight, ElementName=chartCanvas}"

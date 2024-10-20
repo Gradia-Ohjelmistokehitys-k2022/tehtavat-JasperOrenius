@@ -13,7 +13,7 @@ namespace Rising_Star_Pre_assignment.ViewModels
 {
     public class DataViewModel : BaseViewModel
     {
-        private readonly ChartInteractionService chartInteractionService;
+        public readonly ChartInteractionService chartInteractionService;
 
         private DateTime? startDate;
         private DateTime? endDate;
@@ -62,14 +62,16 @@ namespace Rising_Star_Pre_assignment.ViewModels
 
         public event EventHandler<List<Tuple<DateTime, double>>> ChartUpdated;
 
-        public DataViewModel(ChartInteractionService chartInteractionService)
+        public DataViewModel(ChartInteractionService chartInteractionService, Canvas? chartCanvas)
         {
             this.chartInteractionService = chartInteractionService;
+            startDate = DateTime.Today.AddDays(-1);
+            endDate = DateTime.Today;
             bitcoinPrice = new BitcoinPrice();
             FetchData = new FetchDataCommand(FetchBitcoinDataAsync);
             MouseEnterCommand = new MouseEnterCommand(chartInteractionService);
             MouseLeaveCommand = new MouseLeaveCommand(chartInteractionService);
-            MouseMoveCommand = new MouseMoveCommand(chartInteractionService);
+            MouseMoveCommand = new MouseMoveCommand(chartInteractionService, chartCanvas);
             bitcoinPrice.OnDataFetched += OnBitcoinDataFetched;
         }
 

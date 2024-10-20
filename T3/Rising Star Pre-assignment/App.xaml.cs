@@ -20,5 +20,4 @@ namespace Rising_Star_Pre_assignment
             base.OnStartup(e);
         }
     }
-
 }

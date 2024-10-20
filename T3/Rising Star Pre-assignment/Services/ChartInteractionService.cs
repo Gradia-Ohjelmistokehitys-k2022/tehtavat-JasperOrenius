@@ -28,23 +28,36 @@ namespace Rising_Star_Pre_assignment.Services
 
         public void HandleMouseMove(Point mousePosition)
         {
+            if (dataPoints == null || dataPointPositions == null || dataPoints.Count == 0) return;
             double closestDataPoint = dataPointPositions.MinBy(x => Math.Abs(x - mousePosition.X));
-            int newIndex = dataPointPositions.IndexOf(closestDataPoint);
-            if(currentDataPointIndex != newIndex)
+            int closestIndex = dataPointPositions.IndexOf(closestDataPoint);
+            if(currentDataPointIndex != closestIndex)
             {
-                currentDataPointIndex = newIndex;
-                UpdateToolTip(dataPoints[newIndex]);
+                currentDataPointIndex = closestIndex;
+                UpdateToolTip(dataPoints[closestIndex]);
+            }
+            if(inputLine != null)
+            {
+                inputLine.X1 = mousePosition.X;
+                inputLine.X2 = mousePosition.X;
+                inputLine.Visibility = Visibility.Visible;
             }
         }
         
         public void HandleMouseEnter()
         {
-            inputLine.Visibility = Visibility.Visible;
+            if(inputLine != null)
+            {
+                inputLine.Visibility = Visibility.Visible;
+            }
         }
 
         public void HandleMouseLeave()
         {
-            inputLine.Visibility = Visibility.Hidden;
+            if(inputLine != null)
+            {
+                inputLine.Visibility = Visibility.Hidden;
+            }
             HideAllToolTips();
         }
 
@@ -72,6 +85,7 @@ namespace Rising_Star_Pre_assignment.Services
 
         public void HideAllToolTips()
         {
+            if (dataPoints == null || dataPoints.Count == 0) return;
             foreach(var point in dataPoints)
             {
                 if(point.ToolTip is ToolTip toolTip)
