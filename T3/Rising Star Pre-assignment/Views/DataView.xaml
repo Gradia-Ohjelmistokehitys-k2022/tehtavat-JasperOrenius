@@ -38,7 +38,7 @@
                       Y2="{Binding ActualHeight, ElementName=chartCanvas}"
                       Stroke="White"
                       StrokeThickness="2"
-                      Visibility="{Binding IsLineVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+                      Visibility="{Binding IsLineVisible, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                 <ItemsControl ItemsSource="{Binding DataPoints}">
                     <ItemsControl.ItemTemplate>

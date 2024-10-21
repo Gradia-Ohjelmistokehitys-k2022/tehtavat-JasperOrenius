@@ -3,11 +3,8 @@ using Rising_Star_Pre_assignment.Controllers;
 using Rising_Star_Pre_assignment.Models;
 using Rising_Star_Pre_assignment.Services;
 using System.Collections.ObjectModel;
-using System.Security.AccessControl;
-using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using System.Windows.Shapes;
 
 namespace Rising_Star_Pre_assignment.ViewModels
 {
