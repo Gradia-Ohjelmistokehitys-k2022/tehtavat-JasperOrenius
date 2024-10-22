@@ -37,7 +37,7 @@ namespace Rising_Star_Pre_assignment.ViewModels
             var viewModel = (DataViewModel)DataContext;
             if(viewModel != null)
             {
-                viewModel.chartInteractionService.Initialize(chartCanvas, inputLine, dataPoints, dataPointPositions);
+                viewModel.chartInteractionService.Initialize(chartCanvas, dataPoints, dataPointPositions);
             }
         }
 

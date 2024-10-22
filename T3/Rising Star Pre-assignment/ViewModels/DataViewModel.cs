@@ -21,17 +21,6 @@ namespace Rising_Star_Pre_assignment.ViewModels
         public ICommand MouseEnterCommand { get; private set; }
         public ICommand MouseLeaveCommand { get; private set; }
 
-        private double inputLinePosition;
-        public double InputLinePosition
-        {
-            get => inputLinePosition;
-            set
-            {
-                inputLinePosition = value;
-                OnPropertyChanged(nameof(InputLinePosition));
-            }
-        }
-
         private int? currentDataPointIndex;
         public int? CurrentDataPointIndex
         {
@@ -40,17 +29,6 @@ namespace Rising_Star_Pre_assignment.ViewModels
             {
                 currentDataPointIndex = value;
                 OnPropertyChanged(nameof(CurrentDataPointIndex));
-            }
-        }
-
-        private bool isLineVisible;
-        public bool IsLineVisible
-        {
-            get => isLineVisible;
-            set
-            {
-                isLineVisible = value;
-                OnPropertyChanged(nameof(IsLineVisible));
             }
         }
 

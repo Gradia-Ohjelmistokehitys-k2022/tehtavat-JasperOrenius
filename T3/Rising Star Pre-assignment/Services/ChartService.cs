@@ -69,15 +69,15 @@ namespace Rising_Star_Pre_assignment.Services
                 polyline.Points.Add(new Point(x, y));
                 Ellipse dataPoint = new Ellipse
                 {
-                    Width = 6,
-                    Height = 6,
+                    Width = 2,
+                    Height = 2,
                     Fill = (Brush)new BrushConverter().ConvertFrom("#81c995"),
                     Stroke = (Brush)new BrushConverter().ConvertFrom("#81c995"),
                     StrokeThickness = 1,
                     Tag = new Tuple<DateTime, double>(bitcoinPrices[i].Item1, bitcoinPrices[i].Item2)
                 };
-                Canvas.SetLeft(dataPoint, x - 3);
-                Canvas.SetTop(dataPoint, y - 3);
+                Canvas.SetLeft(dataPoint, x - 1);
+                Canvas.SetTop(dataPoint, y - 1);
                 dataPointPositions.Add(x);
                 dataPoints.Add(dataPoint);
                 chartCanvas.Children.Add(dataPoint);

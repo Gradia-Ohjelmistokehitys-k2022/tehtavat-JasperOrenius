@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Shapes;
 
 namespace Rising_Star_Pre_assignment.Services
@@ -13,15 +8,14 @@ namespace Rising_Star_Pre_assignment.Services
     public class ChartInteractionService : IChartInteractionService
     {
         private Canvas chartCanvas;
-        private Line inputLine;
+        private Line inputLine = new Line();
         private List<Ellipse> dataPoints;
         private List<double> dataPointPositions;
         private int? currentDataPointIndex;
 
-        public void Initialize(Canvas chartCanvas, Line inputLine, List<Ellipse> dataPoints, List<double> dataPointPositions)
+        public void Initialize(Canvas chartCanvas, List<Ellipse> dataPoints, List<double> dataPointPositions)
         {
             this.chartCanvas = chartCanvas;
-            this.inputLine = inputLine;
             this.dataPoints = dataPoints;
             this.dataPointPositions = dataPointPositions;
             currentDataPointIndex = null;
@@ -39,25 +33,29 @@ namespace Rising_Star_Pre_assignment.Services
             }
             if(inputLine != null)
             {
-                inputLine.X1 = mousePosition.X;
-                inputLine.X2 = mousePosition.X;
+                inputLine.X1 = closestDataPoint;
+                inputLine.X2 = closestDataPoint;
                 inputLine.Visibility = Visibility.Visible;
             }
         }
         
         public void HandleMouseEnter()
         {
-            if(inputLine != null)
-            {
-                inputLine.Visibility = Visibility.Visible;
-            }
+            if(dataPointPositions == null || !dataPointPositions.Any()) return;
+            double canvasheight = chartCanvas.ActualHeight;
+            inputLine.X1 = 0;
+            inputLine.X2 = 0;
+            inputLine.Y1 = 0;
+            inputLine.Y2 = canvasheight;
+            inputLine.Stroke = Brushes.White;
+            chartCanvas.Children.Add(inputLine);
         }
 
         public void HandleMouseLeave()
         {
-            if(inputLine != null)
+            if(chartCanvas != null && inputLine != null)
             {
-                inputLine.Visibility = Visibility.Hidden;
+                chartCanvas.Children.Remove(inputLine);
             }
             HideAllToolTips();
         }
