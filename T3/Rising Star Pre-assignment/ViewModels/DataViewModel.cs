@@ -16,6 +16,49 @@ namespace Rising_Star_Pre_assignment.ViewModels
         private DateTime? endDate;
         private readonly BitcoinPrice bitcoinPrice;
 
+        private double? lowestPrice;
+        public double? LowestPrice
+        {
+            get => lowestPrice;
+            set
+            {
+                lowestPrice = value;
+                OnPropertyChanged(nameof(LowestPrice));
+            }
+        }
+
+        private DateTime? lowestPriceDate;
+        public DateTime? LowestPriceDate
+        {
+            get => lowestPriceDate;
+            set { 
+                lowestPriceDate = value; 
+                OnPropertyChanged(nameof(LowestPriceDate)); 
+            }
+        }
+
+        private double? highestPrice;
+        public double? HighestPrice
+        {
+            get => lowestPrice;
+            set
+            {
+                lowestPrice = value;
+                OnPropertyChanged(nameof(HighestPrice));
+            }
+        }
+
+        private DateTime? highestPriceDate;
+        public DateTime? HighestPriceDate
+        {
+            get => highestPriceDate;
+            set
+            {
+                lowestPriceDate = value;
+                OnPropertyChanged(nameof(HighestPriceDate));
+            }
+        }
+
         public ICommand FetchData { get; }
         public ICommand MouseMoveCommand { get; private set; }
         public ICommand MouseEnterCommand { get; private set; }
@@ -84,6 +127,16 @@ namespace Rising_Star_Pre_assignment.ViewModels
             {
                 DataPoints.Clear();
                 DataPointPositions.Clear();
+
+                var minPrice = bitcoinPrices.MinBy(data => data.Item2);
+                var maxPrice = bitcoinPrices.MinBy(data => data.Item2);
+
+                LowestPrice = minPrice?.Item2;
+                LowestPriceDate = minPrice?.Item1;
+
+                HighestPrice = maxPrice?.Item2;
+                HighestPriceDate = maxPrice?.Item1;
+
                 foreach (var bitcoinData in bitcoinPrices)
                 {
                     var dateTime = bitcoinData.Item1;

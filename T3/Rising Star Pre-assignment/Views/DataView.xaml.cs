@@ -32,7 +32,7 @@ namespace Rising_Star_Pre_assignment.ViewModels
         private void DataViewModel_ChartUpdated(object? sender, List<Tuple<DateTime, double>> bitcoinPrices)
         {
             List<Ellipse> dataPoints = new List<Ellipse>();
-            List<double> dataPointPositions = new List<double>();
+            List<Point> dataPointPositions = new List<Point>();
             chartService.DrawPriceChart(chartCanvas, bitcoinPrices, dataPoints, dataPointPositions);
             var viewModel = (DataViewModel)DataContext;
             if(viewModel != null)

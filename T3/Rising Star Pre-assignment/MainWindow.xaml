@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="MainWindow" 
         Height="500" 
-        Width="800">
+        Width="867">
     <Grid>
         <views:DataView DataContext="{Binding CurrentViewModel}"/>
     </Grid>

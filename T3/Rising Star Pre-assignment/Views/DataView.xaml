@@ -7,29 +7,26 @@
              xmlns:utils="clr-namespace:Rising_Star_Pre_assignment.Utils"
              mc:Ignorable="d"
              d:DesignHeight="500"
-             d:DesignWidth="800">
+             d:DesignWidth="900">
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </UserControl.Resources>
-    <Grid>
-        <StackPanel Background="#FF5A5A5A">
+    <Grid Background="#FF5A5A5A">
+        <Canvas Background="#FF796F6F" VerticalAlignment="Top" HorizontalAlignment="Left">
             <StackPanel Orientation="Horizontal">
                 <Label Content="Start Date:" VerticalAlignment="Center" FontFamily="Arial" FontWeight="Bold" Foreground="White"/>
                 <DatePicker x:Name="startDatePicker" Margin="10,0" SelectedDate="{Binding StartDate, Mode=TwoWay}"/>
                 <Label Content="End Date:" VerticalAlignment="Center" FontFamily="Arial" FontWeight="Bold" Foreground="White"/>
                 <DatePicker x:Name="endDatePicker" Margin="10,0" SelectedDate="{Binding EndDate, Mode=TwoWay}"/>
             </StackPanel>
-            <StackPanel Orientation="Horizontal" Margin="0,10">
-                <Button Style="{DynamicResource ButtonStyle_Rounded}" Content="Fetch Data" Command="{Binding FetchData}" Width="115" Margin="5" Height="41" FontSize="18" FontFamily="Arial" Background="#FF64CCF1" Foreground="White"/>
-            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,10"/>
             <Canvas x:Name="chartCanvas" 
                     Width="600" 
                     Height="300" 
                     Background="#FF1F1F1F" 
-                    Margin="0,20" 
                     utils:MouseEvents.MouseMoveCommand="{Binding MouseMoveCommand}"
                     utils:MouseEvents.MouseEnterCommand="{Binding MouseEnterCommand}"
-                    utils:MouseEvents.MouseLeaveCommand="{Binding MouseLeaveCommand}">
+                    utils:MouseEvents.MouseLeaveCommand="{Binding MouseLeaveCommand}" Canvas.Left="64" Canvas.Top="134" HorizontalAlignment="Left" VerticalAlignment="Top">
 
                 <ItemsControl ItemsSource="{Binding DataPoints}">
                     <ItemsControl.ItemTemplate>
@@ -42,6 +39,51 @@
                     </ItemsControl.ItemTemplate>
                 </ItemsControl>
             </Canvas>
-        </StackPanel>
+            <Button Style="{DynamicResource ButtonStyle_Rounded}" Content="Fetch Data" Command="{Binding FetchData}" Width="116" Height="41" FontSize="18" FontFamily="Arial" Background="#FF64CCF1" Foreground="White" RenderTransformOrigin="0.541,0.503" Canvas.Left="674" Canvas.Top="390" HorizontalAlignment="Center" VerticalAlignment="Top">
+                <Button.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform/>
+                        <RotateTransform Angle="-0.201"/>
+                        <TranslateTransform X="-0.002" Y="-0.02"/>
+                    </TransformGroup>
+                </Button.RenderTransform>
+            </Button>
+            <GroupBox Height="78" Header="Price" Width="203" Canvas.Left="10" Canvas.Top="29" HorizontalAlignment="Center" Foreground="White">
+                <GroupBox.BorderBrush>
+                    <SolidColorBrush Color="#FFF0F0F0" Opacity="1"/>
+                </GroupBox.BorderBrush>
+                <Canvas>
+                    <Label Content="Min:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top"/>
+                    <Label Content="{Binding LowestPrice}" HorizontalAlignment="Center" Height="28" VerticalAlignment="Center" Canvas.Left="33" Foreground="White"/>
+                    <Label Content="Max:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top" Canvas.Top="27"/>
+                    <Label Content="{Binding HighestPrice}" Height="28" Canvas.Left="33" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="27"/>
+                </Canvas>
+            </GroupBox>
+            <GroupBox Height="78" Header="Volume" Width="203" Canvas.Left="218" Canvas.Top="29" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Canvas>
+                    <Label Content="Min:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top"/>
+                    <Label Content="0" HorizontalAlignment="Center" Height="28" VerticalAlignment="Center" Canvas.Left="33" Foreground="White"/>
+                    <Label Content="Max:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top" Canvas.Top="27"/>
+                    <Label Content="0" Height="28" Canvas.Left="33" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="27"/>
+                </Canvas>
+            </GroupBox>
+            <GroupBox Height="78" Header="Bullish" Width="203" Canvas.Left="426" Canvas.Top="29" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Canvas>
+                    <Label Content="Start:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top"/>
+                    <Label Content="0" HorizontalAlignment="Center" Height="28" VerticalAlignment="Center" Canvas.Left="33" Foreground="White"/>
+                    <Label Content="End:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top" Canvas.Top="27"/>
+                    <Label Content="0" Height="28" Canvas.Left="33" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="27"/>
+                </Canvas>
+            </GroupBox>
+            <GroupBox Height="78" Header="Bearish" Width="203" Canvas.Left="634" Canvas.Top="29" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Canvas>
+                    <Label Content="Start:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top"/>
+                    <Label Content="0" HorizontalAlignment="Center" Height="28" VerticalAlignment="Center" Canvas.Left="33" Foreground="White"/>
+                    <Label Content="End:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top" Canvas.Top="27"/>
+                    <Label Content="0" Height="28" Canvas.Left="33" Foreground="White" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="27"/>
+                </Canvas>
+            </GroupBox>
+        </Canvas>
     </Grid>
 </UserControl>

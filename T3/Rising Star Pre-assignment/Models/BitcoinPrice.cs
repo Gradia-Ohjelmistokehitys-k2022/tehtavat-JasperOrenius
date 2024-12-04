@@ -15,14 +15,44 @@ namespace Rising_Star_Pre_assignment.Models
 
         public async Task FetchBitcoinDataAsync(DateTime startDate, DateTime endDate)
         {
-            long fromUnix = DateTimeToUnixTimestamp(startDate);
-            long toUnix = DateTimeToUnixTimestamp(endDate.AddHours(1));
-            string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={fromUnix}&to={toUnix}";
-            using (HttpClient client = new HttpClient())
+            bitcoinPrices = new List<Tuple<DateTime, double>>();
+
+            DateTime currentStart = startDate;
+            TimeSpan chunkSize = TimeSpan.FromDays(365);
+
+            while(currentStart < endDate)
             {
-                var response = await client.GetStringAsync(url);
-                var marketData = JsonConvert.DeserializeObject<MarketData>(response);
-                ProcessMarketData(marketData);
+                DateTime currentEnd = currentStart.Add(chunkSize);
+                if(currentEnd > endDate) currentEnd = endDate;
+                
+                long fromUnix = DateTimeToUnixTimestamp(currentStart);
+                long toUnix = DateTimeToUnixTimestamp(currentEnd);
+                
+                string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={fromUnix}&to={toUnix}";
+                
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        var response = await client.GetAsync(url);
+                        if(response.IsSuccessStatusCode)
+                        {
+                            var responseBody = await response.Content.ReadAsStringAsync();
+                            var marketData = JsonConvert.DeserializeObject<MarketData>(responseBody);
+                            ProcessMarketData(marketData);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    catch(Exception ex)
+                    {
+                        break;
+                    }
+                }
+                await Task.Delay(1000);
+                currentStart = currentEnd;
             }
         }
         
