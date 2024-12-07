@@ -59,6 +59,65 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+            <BorderGapMaskConverter x:Key="BorderGapMaskConverter"/>
+            <Style x:Key="{x:Type GroupBox}" TargetType="{x:Type GroupBox}">
+                <Setter Property="BorderBrush" Value="Gray"/>
+                <Setter Property="Foreground" Value="White"/>
+                <Setter Property="BorderThickness" Value="1"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type GroupBox}">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="4"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="4"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="4"/>
+                                </Grid.RowDefinitions>
+                                <Border CornerRadius="4"
+                                        Grid.Row="1"
+                                        Grid.RowSpan="3"
+                                        Grid.Column="0"
+                                        Grid.ColumnSpan="4"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="Transparent"
+                                        Background="{TemplateBinding Background}"/>
+                                <Border x:Name="Header"
+                                        Padding="6,0,6,0"
+                                        Grid.Row="0"
+                                        Grid.RowSpan="2"
+                                        Grid.Column="1">
+                                    <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"/>
+                                </Border>
+                                <ContentPresenter Grid.Row="2"
+                                                  Grid.Column="1"
+                                                  Grid.ColumnSpan="2"
+                                                  Margin="{TemplateBinding Padding}"/>
+                                <Border CornerRadius="8"
+                                        Grid.Row="1"
+                                        Grid.RowSpan="3"
+                                        Grid.ColumnSpan="4"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        BorderBrush="{TemplateBinding BorderBrush}">
+                                    <Border.OpacityMask>
+                                        <MultiBinding Converter="{StaticResource BorderGapMaskConverter}" ConverterParameter="6">
+                                            <Binding ElementName="Header" Path="ActualWidth"/>
+                                            <Binding RelativeSource="{RelativeSource Self}" Path="ActualWidth"/>
+                                            <Binding RelativeSource="{RelativeSource Self}" Path="ActualHeight"/>
+                                        </MultiBinding>
+                                    </Border.OpacityMask>
+                                </Border>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>

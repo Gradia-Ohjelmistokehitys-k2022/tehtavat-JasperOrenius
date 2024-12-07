@@ -1,6 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -11,7 +12,8 @@ namespace Rising_Star_Pre_assignment.Models
     class BitcoinPrice
     {
         private List<Tuple<DateTime, double>> bitcoinPrices;
-        public event Action<List<Tuple<DateTime, double>>> OnDataFetched;
+        private List<Tuple<DateTime, double>> bitcoinVolumes;
+        public event Action<List<Tuple<DateTime, double>>, List<Tuple<DateTime, double>>> OnDataFetched;
 
         public async Task FetchBitcoinDataAsync(DateTime startDate, DateTime endDate)
         {
@@ -59,13 +61,20 @@ namespace Rising_Star_Pre_assignment.Models
         private void ProcessMarketData(MarketData marketData)
         {
             bitcoinPrices = new List<Tuple<DateTime, double>>();
+            bitcoinVolumes = new List<Tuple<DateTime, double>>();
             foreach (var priceData in marketData.prices)
             {
                 DateTime date = UnixToDateTime(priceData[0]);
                 double price = priceData[1];
                 bitcoinPrices.Add(new Tuple<DateTime, double>(date, price));
             }
-            OnDataFetched?.Invoke(bitcoinPrices);
+            foreach(var volumeData in marketData.total_volumes)
+            {
+                DateTime date = UnixToDateTime(volumeData[0]);
+                double volume = volumeData[1];
+                bitcoinVolumes.Add(new Tuple<DateTime, double>(date, volume));
+            }
+            OnDataFetched?.Invoke(bitcoinPrices, bitcoinVolumes);
         }
 
         public static long DateTimeToUnixTimestamp(DateTime dateTime)

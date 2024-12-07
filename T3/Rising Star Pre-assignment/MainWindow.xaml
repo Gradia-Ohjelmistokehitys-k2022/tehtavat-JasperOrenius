@@ -5,9 +5,8 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
         xmlns:views="clr-namespace:Rising_Star_Pre_assignment.ViewModels"
         mc:Ignorable="d"
-        Title="MainWindow" 
-        Height="500" 
-        Width="867">
+        Title="MainWindow"
+        SizeToContent="WidthAndHeight">
     <Grid>
         <views:DataView DataContext="{Binding CurrentViewModel}"/>
     </Grid>

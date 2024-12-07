@@ -57,15 +57,22 @@ namespace Rising_Star_Pre_assignment.Services
             }
         }
         
-        public void HandleMouseEnter()
+        public void HandleMouseEnter(Point mousePosition)
         {
             if(dataPointPositions == null || !dataPointPositions.Any()) return;
+            Point closestDataPoint = dataPointPositions.OrderBy(point => Math.Abs(point.X - mousePosition.X)).FirstOrDefault();
+            int closestIndex = dataPointPositions.IndexOf(closestDataPoint);
             double canvasWidth = chartCanvas.ActualWidth;
             double canvasHeight = chartCanvas.ActualHeight;
             horizontalInputLine = CreateLine(0, 0, canvasWidth, 0);
             verticalInputLine = CreateLine(0, 0, 0, canvasHeight);
             chartCanvas.Children.Add(horizontalInputLine);
             chartCanvas.Children.Add(verticalInputLine);
+            if (currentDataPointIndex != closestIndex)
+            {
+                currentDataPointIndex = closestIndex;
+                UpdateToolTip(dataPoints[closestIndex]);
+            }
         }
 
         public void HandleMouseLeave()

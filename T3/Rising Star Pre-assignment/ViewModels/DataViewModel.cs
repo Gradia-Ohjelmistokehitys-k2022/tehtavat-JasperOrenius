@@ -3,6 +3,7 @@ using Rising_Star_Pre_assignment.Controllers;
 using Rising_Star_Pre_assignment.Models;
 using Rising_Star_Pre_assignment.Services;
 using System.Collections.ObjectModel;
+using System.Security.Cryptography;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -56,6 +57,138 @@ namespace Rising_Star_Pre_assignment.ViewModels
             {
                 lowestPriceDate = value;
                 OnPropertyChanged(nameof(HighestPriceDate));
+            }
+        }
+
+        private double? lowestVolume;
+        public double? LowestVolume
+        {
+            get => lowestVolume;
+            set
+            {
+                lowestVolume = value;
+                OnPropertyChanged(nameof(LowestVolume));
+            }
+        }
+
+        private DateTime? lowestVolumeDate;
+        public DateTime? LowestVolumeDate
+        {
+            get => lowestVolumeDate;
+            set
+            {
+                lowestVolumeDate = value;
+                OnPropertyChanged(nameof(LowestVolumeDate));
+            }
+        }
+
+        private double? highestVolume;
+        public double? HighestVolume
+        {
+            get => highestVolume;
+            set
+            {
+                highestVolume = value;
+                OnPropertyChanged(nameof(HighestVolume));
+            }
+        }
+
+        private DateTime? highestVolumeDate;
+        public DateTime? HighestVolumeDate
+        {
+            get => highestVolumeDate;
+            set
+            {
+                highestVolumeDate = value;
+                OnPropertyChanged(nameof(HighestVolumeDate));
+            }
+        }
+
+        private DateTime? longestBullishTrendStart;
+        public DateTime? LongestBullishTrendStart
+        {
+            get => longestBullishTrendStart;
+            set
+            {
+                longestBullishTrendStart = value;
+                OnPropertyChanged(nameof(LongestBullishTrendStart));
+            }
+        }
+
+        private DateTime? longestBullishTrendEnd;
+        public DateTime? LongestBullishTrendEnd
+        {
+            get => longestBullishTrendEnd;
+            set
+            {
+                longestBullishTrendEnd = value;
+                OnPropertyChanged(nameof(LongestBullishTrendEnd));
+            }
+        }
+
+        private DateTime? longestBearishTrendStart;
+        public DateTime? LongestBearishTrendStart
+        {
+            get => longestBearishTrendStart;
+            set
+            {
+                longestBearishTrendStart = value;
+                OnPropertyChanged(nameof(LongestBearishTrendStart));
+            }
+        }
+
+        private DateTime? longestBearishTrendEnd;
+        public DateTime? LongestBearishTrendEnd
+        {
+            get => longestBearishTrendEnd;
+            set
+            {
+                longestBearishTrendEnd = value;
+                OnPropertyChanged(nameof(LongestBearishTrendEnd));
+            }
+        }
+
+        private DateTime? bestBuyDate;
+        public DateTime? BestBuyDate
+        {
+            get => bestBuyDate;
+            set
+            {
+                bestBuyDate = value;
+                OnPropertyChanged(nameof(BestBuyDate));
+            }
+        }
+
+        private DateTime? bestSellDate;
+        public DateTime? BestSellDate
+        {
+            get => bestSellDate;
+            set
+            {
+                bestSellDate = value;
+                OnPropertyChanged(nameof(BestSellDate));
+            }
+        }
+
+        private DateTime? bestSellFirstDate;
+        public DateTime? BestSellFirstDate
+        {
+            get => bestSellFirstDate;
+            set
+            {
+                bestSellFirstDate = value;
+                OnPropertyChanged(nameof(BestSellFirstDate));
+            }
+        }
+
+        private DateTime? bestBuyBackDate;
+        public DateTime? BestBuyBackDate
+        {
+            get => bestBuyBackDate;
+            set
+            {
+                bestBuyBackDate = value;
+                OnPropertyChanged(nameof(BestBuyBackDate));
             }
         }
 
@@ -121,7 +254,7 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
         
-        private void OnBitcoinDataFetched(List<Tuple<DateTime, double>> bitcoinPrices)
+        private void OnBitcoinDataFetched(List<Tuple<DateTime, double>> bitcoinPrices, List<Tuple<DateTime, double>> bitcoinVolumes)
         {
             if(bitcoinPrices != null)
             {
@@ -129,13 +262,38 @@ namespace Rising_Star_Pre_assignment.ViewModels
                 DataPointPositions.Clear();
 
                 var minPrice = bitcoinPrices.MinBy(data => data.Item2);
-                var maxPrice = bitcoinPrices.MinBy(data => data.Item2);
+                var maxPrice = bitcoinPrices.MaxBy(data => data.Item2);
 
                 LowestPrice = minPrice?.Item2;
                 LowestPriceDate = minPrice?.Item1;
 
                 HighestPrice = maxPrice?.Item2;
                 HighestPriceDate = maxPrice?.Item1;
+
+                var minVolume = bitcoinVolumes.MinBy(data => data.Item2);
+                var maxVolume = bitcoinVolumes.MaxBy(data => data.Item2);
+
+                LowestVolume = minVolume?.Item2;
+                LowestVolumeDate = minVolume?.Item1;
+
+                HighestVolume = maxVolume?.Item2;
+                HighestVolumeDate = maxVolume?.Item1;
+
+                var bullishTrend = CalculateTrendLenght(bitcoinPrices, true);
+                var bearishTrend = CalculateTrendLenght(bitcoinPrices, false);
+
+                LongestBullishTrendStart = bullishTrend.start;
+                LongestBullishTrendEnd = bullishTrend.end;
+                LongestBearishTrendStart = bearishTrend.start;
+                LongestBearishTrendEnd = bearishTrend.end;
+
+                var bestBuySell = FindBestBuySellDays(bitcoinPrices);
+                BestBuyDate = bestBuySell.Item1;
+                BestSellDate = bestBuySell.Item2;
+
+                var bestSellBuy = FindBestSellBuyDays(bitcoinPrices);
+                BestSellFirstDate = bestSellBuy.Item1;
+                BestBuyBackDate = bestSellBuy.Item2;
 
                 foreach (var bitcoinData in bitcoinPrices)
                 {
@@ -155,6 +313,93 @@ namespace Rising_Star_Pre_assignment.ViewModels
                 OnPropertyChanged(nameof(DataPointPositions));
                 ChartUpdated?.Invoke(this, bitcoinPrices);
             }
+        }
+
+        private (int length, DateTime? start, DateTime? end) CalculateTrendLenght(List<Tuple<DateTime, double>> bitcoinPrices, bool isBullish)
+        {
+            if(bitcoinPrices == null || bitcoinPrices.Count < 2) return (0, null, null);
+            int longestTrend = 0;
+            int currentTrend = 0;
+            DateTime? currentStart = null;
+            DateTime? longestStart = null;
+            DateTime? longestEnd = null;
+            for(int i = 1; i < bitcoinPrices.Count; i++)
+            {
+                if((isBullish && bitcoinPrices[i].Item2 > bitcoinPrices[i - 1].Item2) || (!isBullish && bitcoinPrices[i].Item2 < bitcoinPrices[i - 1].Item2))
+                {
+                    currentTrend++;
+                    if(currentStart == null)
+                    {
+                        currentStart = bitcoinPrices[i - 1].Item1;
+                    }
+                }
+                else
+                {
+                    if(currentTrend > longestTrend)
+                    {
+                        longestTrend = currentTrend;
+                        longestStart = currentStart;
+                        longestEnd = bitcoinPrices[i - 1].Item1;
+                    }
+                    currentTrend = 0;
+                    currentStart = null;
+                }
+            }
+            if(currentTrend > longestTrend)
+            {
+                longestTrend = currentTrend;
+                longestStart = currentStart;
+                longestEnd = bitcoinPrices[^1].Item1;
+            }
+            return (longestTrend, longestStart, longestEnd);
+        }
+
+        private Tuple<DateTime?, DateTime?> FindBestBuySellDays(List<Tuple<DateTime, double>> bitcoinPrices)
+        {
+            if(bitcoinPrices == null || bitcoinPrices.Count < 2) return Tuple.Create<DateTime?, DateTime?>(null, null);
+            double minPrice = double.MaxValue;
+            double maxProfit = 0;
+            DateTime? buyDate = null;
+            DateTime? sellDate = null;
+            foreach(var bitcoinData in bitcoinPrices)
+            {
+                if(bitcoinData.Item2 < minPrice)
+                {
+                    minPrice = bitcoinData.Item2;
+                    buyDate = bitcoinData.Item1;
+                }
+                double profit = bitcoinData.Item2 - minPrice;
+                if(profit > maxProfit)
+                {
+                    maxProfit = profit;
+                    sellDate = bitcoinData.Item1;
+                }
+            }
+            return Tuple.Create(buyDate, sellDate);
+        }
+
+        private Tuple<DateTime?, DateTime?> FindBestSellBuyDays(List<Tuple<DateTime, double>> bitcoinPrices)
+        {
+            if (bitcoinPrices == null || bitcoinPrices.Count < 2) return Tuple.Create<DateTime?, DateTime?>(null, null);
+            double maxPrice = double.MinValue;
+            double maxLoss = 0;
+            DateTime? sellDate = null;
+            DateTime? buyDate = null;
+            foreach(var bitcoinData in bitcoinPrices)
+            {
+                if(bitcoinData.Item2 > maxPrice)
+                {
+                    maxPrice = bitcoinData.Item2;
+                    sellDate = bitcoinData.Item1;
+                }
+                double loss = maxPrice - bitcoinData.Item2;
+                if(loss > maxLoss)
+                {
+                    maxLoss = loss;
+                    buyDate = bitcoinData.Item1;
+                }
+            }
+            return Tuple.Create(sellDate, buyDate);
         }
     }
 }
