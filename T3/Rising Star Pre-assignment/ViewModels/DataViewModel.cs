@@ -104,8 +104,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? longestBullishTrendStart;
-        public DateTime? LongestBullishTrendStart
+        private string? longestBullishTrendStart;
+        public string? LongestBullishTrendStart
         {
             get => longestBullishTrendStart;
             set
@@ -115,8 +115,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? longestBullishTrendEnd;
-        public DateTime? LongestBullishTrendEnd
+        private string? longestBullishTrendEnd;
+        public string? LongestBullishTrendEnd
         {
             get => longestBullishTrendEnd;
             set
@@ -126,8 +126,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? longestBearishTrendStart;
-        public DateTime? LongestBearishTrendStart
+        private string? longestBearishTrendStart;
+        public string? LongestBearishTrendStart
         {
             get => longestBearishTrendStart;
             set
@@ -137,8 +137,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? longestBearishTrendEnd;
-        public DateTime? LongestBearishTrendEnd
+        private string? longestBearishTrendEnd;
+        public string? LongestBearishTrendEnd
         {
             get => longestBearishTrendEnd;
             set
@@ -148,8 +148,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? bestBuyDate;
-        public DateTime? BestBuyDate
+        private string? bestBuyDate;
+        public string? BestBuyDate
         {
             get => bestBuyDate;
             set
@@ -159,8 +159,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? bestSellDate;
-        public DateTime? BestSellDate
+        private string? bestSellDate;
+        public string? BestSellDate
         {
             get => bestSellDate;
             set
@@ -170,8 +170,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? bestSellFirstDate;
-        public DateTime? BestSellFirstDate
+        private string? bestSellFirstDate;
+        public string? BestSellFirstDate
         {
             get => bestSellFirstDate;
             set
@@ -181,8 +181,8 @@ namespace Rising_Star_Pre_assignment.ViewModels
             }
         }
 
-        private DateTime? bestBuyBackDate;
-        public DateTime? BestBuyBackDate
+        private string? bestBuyBackDate;
+        public string? BestBuyBackDate
         {
             get => bestBuyBackDate;
             set
@@ -282,18 +282,18 @@ namespace Rising_Star_Pre_assignment.ViewModels
                 var bullishTrend = CalculateTrendLenght(bitcoinPrices, true);
                 var bearishTrend = CalculateTrendLenght(bitcoinPrices, false);
 
-                LongestBullishTrendStart = bullishTrend.start;
-                LongestBullishTrendEnd = bullishTrend.end;
-                LongestBearishTrendStart = bearishTrend.start;
-                LongestBearishTrendEnd = bearishTrend.end;
+                LongestBullishTrendStart = bullishTrend.start?.ToString("dd/MM/yyyy hh:mm");
+                LongestBullishTrendEnd = bullishTrend.end?.ToString("dd/MM/yyyy hh:mm");
+                LongestBearishTrendStart = bearishTrend.start?.ToString("dd/MM/yyyy hh:mm");
+                LongestBearishTrendEnd = bearishTrend.end?.ToString("dd/MM/yyyy hh:mm");
 
                 var bestBuySell = FindBestBuySellDays(bitcoinPrices);
-                BestBuyDate = bestBuySell.Item1;
-                BestSellDate = bestBuySell.Item2;
+                BestBuyDate = bestBuySell.Item1?.ToString("dd/MM/yyyy hh:mm");
+                BestSellDate = bestBuySell.Item2?.ToString("dd/MM/yyyy hh:mm");
 
                 var bestSellBuy = FindBestSellBuyDays(bitcoinPrices);
-                BestSellFirstDate = bestSellBuy.Item1;
-                BestBuyBackDate = bestSellBuy.Item2;
+                BestSellFirstDate = bestSellBuy.Item1?.ToString("dd/MM/yyyy hh:mm");
+                BestBuyBackDate = bestSellBuy.Item2?.ToString("dd/MM/yyyy hh:mm");
 
                 foreach (var bitcoinData in bitcoinPrices)
                 {

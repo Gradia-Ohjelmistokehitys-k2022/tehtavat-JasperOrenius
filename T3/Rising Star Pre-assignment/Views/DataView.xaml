@@ -31,9 +31,9 @@
             <GroupBox Height="78" Header="Bullish" Width="220" Canvas.Left="460" Canvas.Top="5" BorderBrush="Goldenrod" BorderThickness="2" Background="#FF262626" Foreground="WhiteSmoke" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top">
                 <Canvas>
                     <Label Content="Start:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top" Foreground="#FFBFBFBF"/>
-                    <Label Content="{Binding LongestBullishTrendStart}" HorizontalAlignment="Center" Height="28" VerticalAlignment="Center" Canvas.Left="33" Foreground="WhiteSmoke"/>
+                    <Label Content="{Binding LongestBullishTrendStart}" HorizontalAlignment="Left" Height="28" VerticalAlignment="Center" Canvas.Left="36" Foreground="WhiteSmoke"/>
                     <Label Content="End:" HorizontalAlignment="Center" Height="28" VerticalAlignment="Top" Canvas.Top="27" Foreground="#FFBFBFBF"/>
-                    <Label Content="{Binding LongestBullishTrendEnd}" Height="28" Canvas.Left="33" Foreground="WhiteSmoke" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="27"/>
+                    <Label Content="{Binding LongestBullishTrendEnd}" Height="28" Canvas.Left="36" Foreground="WhiteSmoke" HorizontalAlignment="Left" VerticalAlignment="Center" Canvas.Top="27"/>
                 </Canvas>
             </GroupBox>
             <GroupBox Height="78" Header="Bearish" Width="220" Canvas.Left="685" Canvas.Top="5" BorderBrush="Goldenrod" BorderThickness="2" Background="#FF262626" Foreground="WhiteSmoke" FontWeight="Bold" HorizontalAlignment="Center" VerticalAlignment="Top">
@@ -90,7 +90,7 @@
             </Button.RenderTransform>
         </Button>
         <Label Content="Start Date:" FontFamily="Arial" FontWeight="Bold" Foreground="WhiteSmoke" Margin="679,337,144,151" FontSize="20"/>
-        <DatePicker x:Name="startDatePicker" SelectedDate="{Binding StartDate, Mode=TwoWay}" BorderBrush="Gold" Margin="789,338,11,151" FontSize="16"/>
+        <DatePicker x:Name="startDatePicker" SelectedDate="{Binding StartDate, Mode=TwoWay}" BorderBrush="Gold" Margin="789,338,10,151" FontSize="16"/>
         <Label Content="End Date:" FontFamily="Arial" Foreground="WhiteSmoke" FontWeight="Bold" Margin="679,371,148,114" FontSize="20"/>
         <DatePicker x:Name="endDatePicker" SelectedDate="{Binding EndDate, Mode=TwoWay}" BorderBrush="Gold" Margin="789,373,10,116" FontSize="16"/>
     </Grid>
