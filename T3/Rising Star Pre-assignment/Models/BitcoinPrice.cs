@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Rising_Star_Pre_assignment.Models
 {
@@ -17,45 +18,25 @@ namespace Rising_Star_Pre_assignment.Models
 
         public async Task FetchBitcoinDataAsync(DateTime startDate, DateTime endDate)
         {
-            bitcoinPrices = new List<Tuple<DateTime, double>>();
-
-            DateTime currentStart = startDate;
-            TimeSpan chunkSize = TimeSpan.FromDays(365);
-
-            while(currentStart < endDate)
+            long fromUnix = DateTimeToUnixTimestamp(startDate);
+            long toUnix = DateTimeToUnixTimestamp(endDate);
+            
+            string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={fromUnix}&to={toUnix}";
+           
+            try
             {
-                DateTime currentEnd = currentStart.Add(chunkSize);
-                if(currentEnd > endDate) currentEnd = endDate;
-                
-                long fromUnix = DateTimeToUnixTimestamp(currentStart);
-                long toUnix = DateTimeToUnixTimestamp(currentEnd);
-                
-                string url = $"https://api.coingecko.com/api/v3/coins/bitcoin/market_chart/range?vs_currency=eur&from={fromUnix}&to={toUnix}";
-                
-                using (HttpClient client = new HttpClient())
+                using(HttpClient client = new HttpClient())
                 {
-                    try
-                    {
-                        var response = await client.GetAsync(url);
-                        if(response.IsSuccessStatusCode)
-                        {
-                            var responseBody = await response.Content.ReadAsStringAsync();
-                            var marketData = JsonConvert.DeserializeObject<MarketData>(responseBody);
-                            ProcessMarketData(marketData);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                    catch(Exception ex)
-                    {
-                        break;
-                    }
+                    var response = await client.GetStringAsync(url);
+                    var marketData = JsonConvert.DeserializeObject<MarketData>(response);
+                    ProcessMarketData(marketData);
                 }
-                await Task.Delay(1000);
-                currentStart = currentEnd;
             }
+            catch(Exception ex)
+            {
+                MessageBox.Show("Something went wrong!");
+            }
+            
         }
         
         private void ProcessMarketData(MarketData marketData)

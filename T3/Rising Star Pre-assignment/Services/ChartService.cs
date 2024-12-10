@@ -20,7 +20,7 @@ namespace Rising_Star_Pre_assignment.Services
             if (dataPointPositions != null) dataPointPositions.Clear();
             if (bitcoinPrices == null || !bitcoinPrices.Any()) return;
 
-            int maxDataPoints = 50;
+            int maxDataPoints = 100;
             List<Tuple<DateTime, double>> sampledPrices;
             if(bitcoinPrices.Count > maxDataPoints)
             {
